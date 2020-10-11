@@ -59,6 +59,34 @@ public class HotelReservation {
 		hotelReservationSystem.addHotel("Bridgewood", 160, 60, 4, 110, 50);
 		hotelReservationSystem.addHotel("Ridgewood", 220, 150, 5, 100, 40);
 		hotelReservationSystem.findCheapestHotel();
+		hotelReservationSystem.addWeekdayandWeekendRates();
 
+	}
+
+	private void addWeekdayandWeekendRates() {
+		for (int i = 0; i < hotelList.size(); i++) {
+			Scanner sc = new Scanner(System.in);
+			System.out.println("Enter the hotel name for which you want to add weekday and weekend rates :");
+			String hotelName = sc.nextLine();
+			System.out.println("Enter the weekday rates for " + hotelName);
+			int weekdayRate = sc.nextInt();
+			System.out.println("Enter the weekend rates for " + hotelName);
+			int weekendRate = sc.nextInt();
+			boolean check = addWeekdayandWeekendRates(hotelName, weekdayRate, weekendRate);
+		}
+	}
+
+	public boolean addWeekdayandWeekendRates(String hotelName, int weekdayRate, int weekendRate) {
+		boolean check = false;
+		for (Hotel hotel : hotelList) {
+			if (hotel.getHotelName().equalsIgnoreCase(hotelName)) {
+				System.out.println("bdia");
+				hotel.setWeekdayRateForRegularCustomers(weekdayRate);
+				hotel.setWeekendRateForRegularCustomers(weekendRate);
+				check = true;
+				System.out.println("changes made successfully for " + hotelName);
+			}
+		}
+		return check;
 	}
 }
