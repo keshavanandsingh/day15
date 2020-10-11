@@ -7,6 +7,15 @@ public class Hotel {
 	private int hotelRating;
 	private int weekDayRateForRewardCustomers;
 	private int weekendRateForRewardCustomers;
+	public long totalRate;
+
+	public long getTotalRate() {
+		return totalRate;
+	}
+
+	public void setTotalRate(long totalRate) {
+		this.totalRate = totalRate;
+	}
 
 	public Hotel(String hotelName, int weekdayRateForRegularCustomers, int weekendRateForRegularCustomers,
 			int hotelRating, int weekDayRateForRewardCustomers, int weekendRateForRewardCustomers) {
