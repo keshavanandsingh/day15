@@ -95,6 +95,72 @@ public class HotelReservation {
 		hotelReservationSystem.findCheapestBestRatedHotel();
 		hotelReservationSystem.findBestRatedHotel();
 		hotelReservationSystem.addSpecialRatesForRewardCustomers();
+		hotelReservationSystem.findCheapestBestRatedHotelForSpecialCustomers();
+	}
+
+	private void findCheapestBestRatedHotelForSpecialCustomers() {
+		Scanner sc = new Scanner(System.in);
+		System.out.println("Enter date range to find hotel in format(dd-mm-yyyy)");
+		System.out.println("Enter start date");
+		String start = sc.nextLine();
+		System.out.println("Enter end date");
+		String end = sc.nextLine();
+		Hotel cheapestBestRatedHotel = findCheapestBestRatedHotelForSpecialCustomers(start, end);
+		if (cheapestBestRatedHotel != null)
+			System.out.println(
+					cheapestBestRatedHotel.getHotelName() + ", Rating: " + cheapestBestRatedHotel.getHotelRating()
+							+ ", Total rates :$" + cheapestBestRatedHotel.getTotalRate());
+		else
+			System.out.println("Improper dates entered");
+	}
+
+	private Hotel findCheapestBestRatedHotelForSpecialCustomers(String start, String end) {
+		Date startDate = null;
+		Date endDate = null;
+		try {
+			startDate = new SimpleDateFormat("dd-mm-yyyy").parse(start);
+			endDate = new SimpleDateFormat("dd-mm-yyyy").parse(end);
+		} catch (ParseException e) {
+			System.out.println(e.getMessage());
+		}
+		long noOfDays = 1 + (endDate.getTime() - startDate.getTime()) / 1000 / 60 / 60 / 24;
+
+		Calendar startCal = Calendar.getInstance();
+		startCal.setTime(startDate);
+
+		Calendar endCal = Calendar.getInstance();
+		endCal.setTime(endDate);
+		long noOfWeekdays = 0;
+		if (startCal.getTimeInMillis() < endCal.getTimeInMillis()) {
+
+			do {
+				if (startCal.get(Calendar.DAY_OF_WEEK) != Calendar.SATURDAY
+						&& startCal.get(Calendar.DAY_OF_WEEK) != Calendar.SUNDAY) {
+					++noOfWeekdays;
+				}
+				startCal.add(Calendar.DAY_OF_MONTH, 1);
+			} while (startCal.getTimeInMillis() <= endCal.getTimeInMillis());
+
+			long noOfWeekends = noOfDays - noOfWeekdays;
+
+			for (Hotel hotel : hotelList) {
+				long totalRate = noOfWeekdays * hotel.getWeekDayRateForRewardCustomers()
+						+ noOfWeekends * hotel.getWeekendRateForRewardCustomers();
+				hotel.setTotalRate(totalRate);
+			}
+			List<Hotel> sortedHotelList = hotelList.stream().sorted(Comparator.comparing(Hotel::getTotalRate))
+					.collect(Collectors.toList());
+
+			Hotel cheapestHotel = sortedHotelList.get(0);
+			long cheapestRate = sortedHotelList.get(0).getTotalRate();
+			for (Hotel hotel : sortedHotelList) {
+				if (hotel.getTotalRate() <= cheapestRate && hotel.getHotelRating() > cheapestHotel.getHotelRating()) {
+					cheapestHotel = hotel;
+				}
+			}
+			return cheapestHotel;
+		} else
+			return null;
 	}
 
 	private void addSpecialRatesForRewardCustomers() {
